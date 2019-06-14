@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
 
-public class Event extends Observable {
+public class Event{
 
     private String title;
     private LocalDateTime date;
@@ -32,9 +32,8 @@ public class Event extends Observable {
     }
 
     public void addOrganization(SecurityUser securityUser) {
-        addObserver(securityUser);
         organizations.add(securityUser.getOrg());
-
+        securityUser.getOrg().addEvent(this);
     }
 
     public Update getLastUpdate() {

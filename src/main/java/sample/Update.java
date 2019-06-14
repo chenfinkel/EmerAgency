@@ -10,10 +10,10 @@ public class Update {
     private Event event;
     private Update previous;
 
-    public Update(Event event, String update) {
+    public Update(Event event, String description) {
         this.event = event;
-        this.originalDescription = update;
-        this.currentDescription = update;
+        this.originalDescription = description;
+        this.currentDescription = description;
         date = LocalDateTime.now();
     }
 

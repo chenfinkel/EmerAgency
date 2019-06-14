@@ -15,4 +15,11 @@ public class ServiceUser extends BasicUser {
         categories = new ArrayList<>();
 
     }
+
+    public void addEvent(String title, SecurityUser securityUser, String description, List<String> cats){
+        Event event = new Event(title, securityUser, null, cats);
+        Update update = new Update(event, description);
+        event.update(update);
+        DBHandler.addEvent(event);
+    }
 }
