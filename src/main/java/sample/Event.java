@@ -14,9 +14,9 @@ public class Event extends Observable {
     private Status status;
     private Update lastUpdate;
     private List<Organization> organizations;
-    private List<Category> categories;
+    private List<String> categories;
 
-    public Event(String title, SecurityUser securityUser, Update update, List<Category> cats) {
+    public Event(String title, SecurityUser securityUser, Update update, List<String> cats) {
         this.title = title;
         categories = cats;
         status = Status.inAction;
@@ -49,8 +49,16 @@ public class Event extends Observable {
         return status.name();
     }
 
-    public List<Category> getCategories() {
+    public List<String> getCategories() {
         return categories;
+    }
+
+    public List<Organization> getOrganizations(){
+        return organizations;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     enum Status { inAction, Done};

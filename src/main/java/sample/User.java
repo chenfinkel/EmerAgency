@@ -4,15 +4,15 @@ import java.util.Observable;
 import java.util.Observer;
 
 public abstract class User implements Observer {
-    private String id;
+    private String username;
     private String password;
     private String mail;
     private Organization org;
 
     public User(){}
 
-    public User(String id, String password, String mail, Organization org){
-        this.id = id;
+    public User(String username, String password, String mail, Organization org){
+        this.username = username;
         this.password = password;
         this.mail = mail;
         this.org = org;
@@ -20,6 +20,10 @@ public abstract class User implements Observer {
 
     public Organization getOrg() {
         return org;
+    }
+
+    public String getUsername(){
+        return username;
     }
 
     @Override

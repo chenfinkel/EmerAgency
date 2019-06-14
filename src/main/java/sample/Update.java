@@ -36,4 +36,8 @@ public class Update {
     public String getCurrentDescription() {
         return currentDescription;
     }
+
+    public Event getEvent() {
+        return event;
+    }
 }

@@ -28,4 +28,8 @@ public class Organization extends Observable {
         addObserver(u);
         users.add(u);
     }
+
+    public void setUsers(List<User> users){
+        this.users.addAll(users);
+    }
 }

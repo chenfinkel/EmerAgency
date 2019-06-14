@@ -8,7 +8,7 @@ public class ServiceCenter extends Organization{
     private static ServiceCenter serviceCenter;
 
     private List<Organization> securityOrgs;
-    private List<Category> categories;
+    private List<String> categories;
     private List<ServiceUser> serviceUsers;
 
     private ServiceCenter(){
@@ -28,6 +28,10 @@ public class ServiceCenter extends Organization{
             serviceCenter = new ServiceCenter();
         }
         return serviceCenter;
+    }
+
+    public void setCategories(List<String> categories){
+        this.categories.addAll(categories);
     }
 
 

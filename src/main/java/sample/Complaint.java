@@ -13,6 +13,23 @@ public class Complaint {
         this.description = description;
         status = complaintStat.Pending;
     }
+
+    public BasicUser getReported() {
+        return reported;
+    }
+
+    public BasicUser getComplainedOn() {
+        return complainedOn;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+    public String getStatus(){
+        return status.name();
+    }
+
     enum complaintStat{ Pending, Approved }
 }
 
