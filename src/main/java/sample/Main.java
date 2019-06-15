@@ -5,6 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import sample.actions.Event;
+import sample.actions.Update;
+import sample.organizations.*;
+import sample.users.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Main extends Application {
 
@@ -20,6 +28,47 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        launch(args);
+        //get organizations
+        Police police = Police.getInstance();
+        MADA mada = MADA.getInstance();
+        FireDepartment fd = FireDepartment.getInstance();
+        ServiceCenter sc = ServiceCenter.getInstance();
+
+        //set service center
+        sc.setCategories(DBHandler.getCategories());
+        HashMap<String,Organization> orgs = new HashMap<>();
+        orgs.put("Police",Police.getInstance());
+        orgs.put("MADA",MADA.getInstance());
+        orgs.put("FireDepartment",FireDepartment.getInstance());
+        sc.setSecurityOrgs(orgs);
+
+        //set admins
+        sc.setAdmin(DBHandler.getAdmin(sc));
+        police.setAdmin(DBHandler.getAdmin(police));
+        mada.setAdmin(DBHandler.getAdmin(mada));
+        fd.getInstance().setAdmin(DBHandler.getAdmin(fd));
+
+        //setUsers
+        police.setUsers(DBHandler.getUsersByOrg(police));
+        mada.setUsers(DBHandler.getUsersByOrg(mada));
+        fd.setUsers(DBHandler.getUsersByOrg(fd));
+        sc.setUsers(DBHandler.getUsersByOrg(sc));
+
+        //add event example
+        ServiceUser bu = (ServiceUser)(sc.getUsers().get(0));
+        List<String> categories = sc.getCategories();
+        SecurityUser su = (SecurityUser)(police.getUsers().get(0));
+        List<BasicUser> users = new ArrayList<>();
+        users.add(su);
+        bu.addEvent("hello",users,"world",categories);
+
+        //update even example
+        Event event = DBHandler.getEvent("hello");
+        Update update = new Update("hello2");
+        event.update(update);
+
+        //launch(args);
     }
+
+
 }

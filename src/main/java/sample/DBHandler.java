@@ -1,8 +1,20 @@
 package sample;
 
+import sample.actions.Complaint;
+import sample.actions.Event;
+import sample.actions.Update;
+import sample.organizations.Organization;
+import sample.organizations.ServiceCenter;
+import sample.users.Admin;
+import sample.users.BasicUser;
+import sample.users.SecurityUser;
+import sample.users.User;
+
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DBHandler {
 
@@ -23,7 +35,7 @@ public class DBHandler {
             e.printStackTrace();
         }
         setEventCategories(newEventID, event);
-        setEventOrganizations(newEventID, event);
+        setEventSecurity(newEventID, event);
     }
 
     public static void addComplaint(Complaint complaint){
@@ -77,19 +89,20 @@ public class DBHandler {
         return categories;
     }
 
-    public static List<User> getUsersByOrg(Organization org){
-        List<User> users = new ArrayList<>();
+    public static List<BasicUser> getUsersByOrg(Organization org){
+        List<BasicUser> users = new ArrayList<>();
         String query = "SELECT * FROM Users WHERE Organization = ? AND Admin = 0";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(query);){
-            pstmt.setString(1,org.getClass().toString().split(" ")[1]);
+            String organization = org.getClass().toString().split(" sample.organizations.")[1];
+            pstmt.setString(1,organization);
             ResultSet rs  = pstmt.executeQuery();
             while (rs.next()) {
                 String username = rs.getString("Username");
                 String password = rs.getString("Password");
                 String mail = rs.getString("Mail");
                 int degree = rs.getInt("Degree");
-                users.add(new BasicUser(username,password,mail,org,degree));
+                users.add(org.createUser(username,password,mail,org,degree));
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -114,15 +127,13 @@ public class DBHandler {
     }
 
     private static void setEventCategories(int newEventID, Event event){
-        String query = "INSERT INTO eventCategories(eventID, categoryID) VALUES(?,?)";
+        String query = "INSERT INTO eventCategories(eventID, Category) VALUES(?,?)";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             List<String> categories = event.getCategories();
             for (int i = 0; i < categories.size(); i++) {
                 pstmt.setInt(1, newEventID);
-                //int catID = getCategoryID(categories.get(i).getTheme());
-                int catID = getID(categories.get(i), "Categories", "categoryID", "Name");
-                pstmt.setInt(2, catID);
+                pstmt.setString(2, categories.get(i));
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -130,35 +141,21 @@ public class DBHandler {
         }
     }
 
-    private static void setEventOrganizations(int newEventID, Event event){
-        String query = "INSERT INTO eventOrganizations(eventID, Organization) VALUES(?,?)";
+    private static void setEventSecurity(int newEventID, Event event){
+        String query = "INSERT INTO eventSecurity(eventID, Username) VALUES(?,?)";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            List<Organization> orgs = event.getOrganizations();
-            for (int i = 0; i < orgs.size(); i++) {
+            List<SecurityUser> security = event.getSecurity();
+            for (int i = 0; i < security.size(); i++) {
                 pstmt.setInt(1, newEventID);
-                String org = orgs.get(i).getClass().toString().split(" ")[1];
-                pstmt.setString(2, org);
+                String username = security.get(i).getUsername();
+                pstmt.setString(2, username);
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    /*private static int getCategoryID(String name){
-        String query = "SELECT categoryID FROM Categories WHERE Name = ? ";
-        int id = -1;
-        try (Connection conn = DriverManager.getConnection(url);
-             PreparedStatement pstmt = conn.prepareStatement(query);) {
-            pstmt.setString(1,name);
-            ResultSet rs  = pstmt.executeQuery();
-            while (rs.next()) {
-                id = rs.getInt("categoryID");
-            }
-        } catch (Exception e){e.printStackTrace();}
-        return id;
-    }*/
 
     private static int getID(String name, String table, String IDColumnLabel, String nameColumnLabel){
         String query = "SELECT " + IDColumnLabel+ " FROM " + table + " WHERE " + nameColumnLabel + " = ? ";
@@ -193,16 +190,143 @@ public class DBHandler {
 
     private static int getMaxID(String table, String columnLabel){
         int ID = -1;
-        String query = "SELECT * FROM "+ table +"ORDER BY eventID DESC LIMIT 1";
+        String query = "SELECT MAX("+ columnLabel + ") FROM "+ table +"";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(query);){
             ResultSet rs  = pstmt.executeQuery();
             while (rs.next()) {
-                ID = rs.getInt(columnLabel);
+                ID = rs.getInt("MAX("+columnLabel+")");
             }
         }catch (Exception e){
             e.printStackTrace();
         }
         return ID;
+    }
+
+    public static Admin getAdmin(Organization org) {
+        Admin admin = null;
+        String query = "SELECT * FROM Users WHERE Organization = ? AND Admin = 1";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);){
+            pstmt.setString(1,org.getClass().toString().split(" sample.organizations.")[1]);
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                String username = rs.getString("Username");
+                String password = rs.getString("Password");
+                String mail = rs.getString("Mail");
+                admin = new Admin(username,password,mail,org);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return admin;
+    }
+
+    public static Event getEvent(String title) {
+        Event event = null;
+        String query = "SELECT * FROM events WHERE Title = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);){
+            pstmt.setString(1,title);
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                String Date = rs.getString("Date");
+                LocalDateTime lclDT = LocalDateTime.parse(Date);
+                String status = rs.getString("Status");
+                int eventID = rs.getInt("eventID");
+                List<BasicUser> users = getEventUsers(eventID);
+                int updateID = rs.getInt("currentUpdate");
+                Update update = getUpdate(updateID);
+                List<String> categories = getEventCategories(eventID);
+                event = new Event(title, users, update, categories, status);
+                update.setEvent(event);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return event;
+    }
+
+    private static List<String> getEventCategories(int eventID) {
+        List<String> categories = new ArrayList<>();
+        String query = "SELECT * FROM eventCategories WHERE eventID = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);){
+            pstmt.setInt(1,eventID);
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                String category = rs.getString("Category");
+                categories.add(category);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return categories;
+    }
+
+    private static Update getUpdate(int updateID) {
+        Update update = null;
+        String query = "SELECT * FROM Updates WHERE updateID = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);){
+            pstmt.setInt(1,updateID);
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                String Date = rs.getString("Date");
+                LocalDateTime lclDT = LocalDateTime.parse(Date);
+                String current = rs.getString("currentDescription");
+                String original = rs.getString("originalDescription");
+                update = new Update();
+                update.setCurrentDescription(current);
+                update.setDate(lclDT);
+                update.setOriginalDescription(original);
+                int prev = rs.getInt("Previous");
+                if (prev != -1) {
+                    update.setPrevious(getUpdate(prev));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return update;
+    }
+
+    private static List<BasicUser> getEventUsers(int eventID) {
+        List<BasicUser> users = new ArrayList<>();
+        String query = "SELECT * FROM eventSecurity WHERE eventID = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);){
+            pstmt.setInt(1,eventID);
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                String username = rs.getString("Username");
+                users.add(getUser(username));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    private static BasicUser getUser(String username) {
+        BasicUser user = null;
+        String query = "SELECT * FROM Users WHERE Username = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);){
+            pstmt.setString(1,username);
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                String password = rs.getString("Password");
+                String mail = rs.getString("Mail");
+                int degree = rs.getInt("Degree");
+                String org = rs.getString("Organization");
+                Organization org2 = ServiceCenter.getInstance().getSecurityOrgs().get(org);
+                user = org2.createUser(username,password,mail,org2,degree);
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return user;
     }
 }
