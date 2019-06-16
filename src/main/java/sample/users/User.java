@@ -28,6 +28,8 @@ public abstract class User implements Observer {
         return username;
     }
 
+    public String getPassword() { return password; }
+
     @Override
     public void update(Observable o, Object arg) {
         //function to DB to add read permission to arg which is the event

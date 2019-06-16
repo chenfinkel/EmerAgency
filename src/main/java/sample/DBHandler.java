@@ -326,6 +326,10 @@ public class DBHandler {
         return users;
     }
 
+    public static BasicUser login(String username){
+        return getUser(username);
+    }
+
     private static BasicUser getUser(String username) {
         BasicUser user = null;
         String query = "SELECT * FROM Users WHERE Username = ? ";

@@ -20,9 +20,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent root = fxmlLoader.load(getClass().getResource("/sample.fxml").openStream());
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        Parent root = fxmlLoader.load(getClass().getResource("/login.fxml").openStream());
+        primaryStage.setTitle("EmerAgency");
+        primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();
     }
 
@@ -74,7 +74,7 @@ public class Main extends Application {
         su.complain(new Complaint(su,su2,"!!!!"));
         su.complain(new Complaint(su,su2,"!!!!"));
 
-        //launch(args);
+        launch(args);
     }
 
 
