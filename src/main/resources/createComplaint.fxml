@@ -18,6 +18,6 @@
       <Button layoutX="502.0" layoutY="33.0" mnemonicParsing="false" onAction="#goBack" prefHeight="31.0" prefWidth="62.0" text="back" />
       <TextArea fx:id="description" layoutX="300.0" layoutY="93.0" prefHeight="200.0" prefWidth="200.0" promptText="description..." />
       <TextField fx:id="complainedOn" layoutX="66.0" layoutY="93.0" promptText="File a complaint on..." />
-      <Label fx:id="unCorrect" layoutX="66.0" layoutY="132.0" text="Label" />
+      <Label fx:id="unCorrect" layoutX="66.0" layoutY="132.0" text=" " />
    </children>
 </AnchorPane>

@@ -54,6 +54,15 @@ public class Controller {
     }
 
     public void saveComplaint(Complaint complaint) {
-        DBHandler.addComplaint(complaint);
+        //DBHandler.addComplaint(complaint);
+        complaint.getReported().complain(complaint);
+    }
+
+    public void saveUpdate(Update update) {
+        update.getEvent().update(update);
+    }
+
+    public Event getEvent(String eventTitle) {
+        return DBHandler.getEvent(eventTitle);
     }
 }

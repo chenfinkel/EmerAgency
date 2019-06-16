@@ -88,6 +88,16 @@ public class Event{
         return security;
     }
 
+    public static boolean isvalidStatus(String status){
+        Status[] statuses = Status.values();
+        for(int i = 0 ; i< statuses.length ; i++){
+            if(status.equals(statuses[0].toString())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     enum Status { inAction, Done};
 
 
