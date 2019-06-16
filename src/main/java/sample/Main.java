@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import sample.actions.Complaint;
 import sample.actions.Event;
 import sample.actions.Update;
 import sample.organizations.*;
@@ -57,7 +58,7 @@ public class Main extends Application {
         //add event example
         ServiceUser bu = (ServiceUser)(sc.getUsers().get(0));
         List<String> categories = sc.getCategories();
-        SecurityUser su = (SecurityUser)(police.getUsers().get(0));
+        SecurityUser su = (SecurityUser)(fd.getUsers().get(0));
         List<BasicUser> users = new ArrayList<>();
         users.add(su);
         bu.addEvent("hello",users,"world",categories);
@@ -66,6 +67,12 @@ public class Main extends Application {
         Event event = DBHandler.getEvent("hello");
         Update update = new Update("hello2");
         event.update(update);
+
+        //add complaint example
+        SecurityUser su2 = (SecurityUser)(fd.getUsers().get(1));
+        su.complain(new Complaint(su,su2,"!!!!"));
+        su.complain(new Complaint(su,su2,"!!!!"));
+        su.complain(new Complaint(su,su2,"!!!!"));
 
         //launch(args);
     }

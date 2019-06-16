@@ -38,14 +38,46 @@ public class DBHandler {
         setEventSecurity(newEventID, event);
     }
 
+    /*public static void setUpdate(Event event){
+        int eventID = -1;
+        int previousID = -1;
+        String query = "SELECT eventID FROM events WHERE Date = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, event.getDate().toString());
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                eventID = rs.getInt("eventID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        query = "SELECT updateID FROM Updates WHERE Date = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, event.getLastUpdate().getPrevious().getDate().toString());
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                previousID = rs.getInt("updateID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        int updateID = addUpdate(event.getLastUpdate(), eventID, previousID);
+
+        query = "UPDATE"
+    }*/
+
     public static void addComplaint(Complaint complaint){
-        int reportedID = getUserID(complaint.getReported().getUsername());
-        int complainedOnID = getUserID(complaint.getComplainedOn().getUsername());
+        String reported = complaint.getReported().getUsername();
+        String complainedOn = complaint.getComplainedOn().getUsername();
         String query = "INSERT INTO Complaints (Reported, ComplainedOn, Description, Status) VALUES (?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, reportedID);
-            pstmt.setInt(2, complainedOnID);
+            pstmt.setString(1, reported);
+            pstmt.setString(2, complainedOn);
             pstmt.setString(3, complaint.getDescription());
             pstmt.setString(4, complaint.getStatus());
             pstmt.executeUpdate();
@@ -56,10 +88,9 @@ public class DBHandler {
 
     public static void updateEvent(Update update){
         Event event = update.getEvent();
-        String eventTitle = event.getTitle();
-        int eventID = getID(eventTitle, "events", "eventID", "Title");
-        String updateName = event.getLastUpdate().getOriginalDescription();
-        int oldUpdateID = getID(updateName, "Updates", "updateID", "originalDescription");
+        String Date = event.getDate().toString();
+        int eventID = getID(Date, "events", "eventID", "Date");
+        int oldUpdateID = getID(Date, "Updates", "updateID", "Date");
         int newUpdateID = addUpdate(update, eventID, oldUpdateID);
 
         String query = "UPDATE events SET currentUpdate = ?" + " WHERE eventID = ?";
@@ -99,31 +130,18 @@ public class DBHandler {
             ResultSet rs  = pstmt.executeQuery();
             while (rs.next()) {
                 String username = rs.getString("Username");
-                String password = rs.getString("Password");
+                /*String password = rs.getString("Password");
                 String mail = rs.getString("Mail");
                 int degree = rs.getInt("Degree");
-                users.add(org.createUser(username,password,mail,org,degree));
+                int warnings = rs.getInt("Warnings");
+                String status = rs.getString("Status");
+                users.add(org.createUser(username,password,mail,org,degree));*/
+                users.add(getUser(username));
             }
         }catch (Exception e){
             e.printStackTrace();
         }
         return users;
-    }
-
-    private static int getUserID(String username){
-        int ID = -1;
-        String query = "SELECT userID FROM Users WHERE Username = ? ";
-        try (Connection conn = DriverManager.getConnection(url);
-             PreparedStatement pstmt = conn.prepareStatement(query);){
-            pstmt.setString(1,username);
-            ResultSet rs  = pstmt.executeQuery();
-            while (rs.next()) {
-                ID = rs.getInt("userID");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return ID;
     }
 
     private static void setEventCategories(int newEventID, Event event){
@@ -320,13 +338,54 @@ public class DBHandler {
                 String mail = rs.getString("Mail");
                 int degree = rs.getInt("Degree");
                 String org = rs.getString("Organization");
+                int warnings = rs.getInt("Warnings");
+                String status = rs.getString("Status");
                 Organization org2 = ServiceCenter.getInstance().getSecurityOrgs().get(org);
                 user = org2.createUser(username,password,mail,org2,degree);
-
+                user.setWarnings(warnings);
+                user.setStatus(status);
+                List<Complaint> complaints = getComplaints(user);
+                user.setComplaints(complaints);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
         return user;
+    }
+
+    private static List<Complaint> getComplaints(BasicUser user) {
+        List<Complaint> complaints = new ArrayList<>();
+        String query = "SELECT * FROM Complaints WHERE complainedOn = ? ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);){
+            pstmt.setString(1,user.getUsername());
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()) {
+                String reported = rs.getString("Reported");
+                BasicUser userReported = getUser(reported);
+                String description = rs.getString("Description");
+                String status = rs.getString("Status");
+                Complaint c = new Complaint(userReported, user, description);
+                c.setStatus(status);
+                complaints.add(c);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return complaints;
+    }
+
+    public static void updateUser(BasicUser basicUser) {
+        String query = "UPDATE Users SET Degree = ? , Warnings = ? , Status = ? WHERE Username = ?";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, basicUser.getDegree());
+            pstmt.setInt(2, basicUser.getWarnings());
+            pstmt.setString(3, basicUser.getStatus());
+            pstmt.setString(4, basicUser.getUsername());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

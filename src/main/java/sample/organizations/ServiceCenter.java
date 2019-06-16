@@ -18,6 +18,7 @@ public class ServiceCenter extends Organization {
 
         categories = new ArrayList<>();
         securityOrgs = new HashMap<>();
+        securityOrgs.put("ServiceCenter", this);
 
     }
 

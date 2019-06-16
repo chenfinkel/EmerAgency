@@ -68,4 +68,8 @@ public class Update {
     public void setOriginalDescription(String originalDescription) {
         this.originalDescription = originalDescription;
     }
+
+    public Update getPrevious() {
+        return previous;
+    }
 }

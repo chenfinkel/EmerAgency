@@ -43,4 +43,8 @@ public abstract class Organization extends Observable {
     }
 
     public abstract BasicUser createUser(String id, String password, String mail, Organization org, int degree);
+
+    public Admin getAdmin() {
+        return admin;
+    }
 }

@@ -1,5 +1,6 @@
 package sample.actions;
 
+import sample.DBHandler;
 import sample.actions.Update;
 import sample.organizations.Organization;
 import sample.users.BasicUser;
@@ -47,6 +48,7 @@ public class Event{
         newUpdate.setPrevious(lastUpdate);
         newUpdate.setEvent(this);
         lastUpdate = newUpdate;
+        DBHandler.updateEvent(newUpdate);
     }
 
     public void addOrganization(SecurityUser securityUser) {

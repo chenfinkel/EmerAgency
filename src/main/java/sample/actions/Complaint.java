@@ -32,7 +32,18 @@ public class Complaint {
         return status.name();
     }
 
-    enum complaintStat{ Pending, Approved }
+    public void approve() {
+        status = complaintStat.Approved;
+    }
+
+    public void decline() {
+    }
+
+    public void setStatus(String status){
+        this.status = complaintStat.valueOf(status);
+    }
+
+    enum complaintStat{ Pending, Approved, Declined }
 }
 
 
