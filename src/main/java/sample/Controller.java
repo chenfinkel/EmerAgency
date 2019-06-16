@@ -3,8 +3,10 @@ package sample;
 import sample.actions.Event;
 import sample.actions.Update;
 import sample.users.BasicUser;
+import sample.users.SecurityUser;
 import sample.users.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Controller {
@@ -38,13 +40,14 @@ public class Controller {
         //public Event(String title, List<BasicUser> security,
         // Update update, List<String> cats, String status) {
 
-        BasicUser manager= new BasicUser();
+        SecurityUser manager= new SecurityUser();
         manager.setUsername(personOnDuty);
+        manager.setOrg(personOnDuty);
         ArrayList<BasicUser> security =new ArrayList<>();
         security.add(manager);
         Update start = new Update();
-        Event e = new Event(name,security
-                ,start,categories, description);
+        start.setDate(LocalDateTime.now());
+        Event e = new Event(name,security,start,categories);
         start.setEvent(e);
         DBHandler.addEvent(e);
     }
