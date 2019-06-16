@@ -28,6 +28,10 @@ public abstract class User implements Observer {
         return username;
     }
 
+    public void setUsername(String username){
+        this.username = username;
+    }
+
     public String getPassword() { return password; }
 
     @Override

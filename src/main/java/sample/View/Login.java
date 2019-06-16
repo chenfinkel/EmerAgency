@@ -30,11 +30,6 @@ public class Login implements Initializable {
     public PasswordField logIn_Password;
     public Label unCorrect;
 
-    public Controller controller;
-
-
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         unCorrect.setVisible(false);
@@ -42,7 +37,7 @@ public class Login implements Initializable {
     }
 
     public void LogInClick(ActionEvent event) throws IOException {
-        BasicUser queryResult = Controller.login(logIn_User.getText());
+        BasicUser queryResult = Controller.getInstance().login(logIn_User.getText());
 
         if(queryResult == null){
             unCorrect.setVisible(true);
@@ -51,6 +46,7 @@ public class Login implements Initializable {
             unCorrect.setVisible(true);
         }
         else{
+            Controller.getInstance().setCurrentUser(queryResult);
             Parent a = FXMLLoader.load(getClass().getResource("/Home.fxml"));
             Scene scene = new Scene(a);
             Stage s = (Stage)((Node)event.getSource()).getScene().getWindow();
