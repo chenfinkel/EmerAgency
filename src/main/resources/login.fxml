@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.View.Login">
+   <children>
+      <TextField fx:id="logIn_User" layoutX="207.0" layoutY="133.0" />
+      <Label layoutX="94.0" layoutY="133.0" prefHeight="31.0" prefWidth="70.0" text="User" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="87.0" layoutY="216.0" text="Password">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="238.0" layoutY="36.0" prefHeight="43.0" prefWidth="124.0" text="Emer Agency" />
+      <Button fx:id="button_LogIN" layoutX="268.0" layoutY="281.0" mnemonicParsing="false" onAction="#LogInClick" text="Log In" />
+      <Label fx:id="unCorrect" layoutX="283.0" layoutY="331.0" text="Label" />
+      <PasswordField fx:id="logIn_Password" layoutX="207.0" layoutY="216.0" />
+   </children>
+</AnchorPane>
