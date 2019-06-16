@@ -1,5 +1,6 @@
 package sample;
 
+import sample.actions.Complaint;
 import sample.actions.Event;
 import sample.actions.Update;
 import sample.users.BasicUser;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class Controller {
 
     private static Controller instance;
-    public User currentUser;
+    public BasicUser currentUser;
 
     private Controller(){
         currentUser = null;
@@ -29,7 +30,7 @@ public class Controller {
         return DBHandler.login(input_username);
     }
 
-    public void setCurrentUser(User user){
+    public void setCurrentUser(BasicUser user){
         this.currentUser = user;
     }
 
@@ -50,5 +51,9 @@ public class Controller {
         Event e = new Event(name,security,start,categories);
         start.setEvent(e);
         DBHandler.addEvent(e);
+    }
+
+    public void saveComplaint(Complaint complaint) {
+        DBHandler.addComplaint(complaint);
     }
 }
