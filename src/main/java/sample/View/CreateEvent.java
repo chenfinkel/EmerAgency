@@ -14,8 +14,15 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import sample.Controller;
+import sample.actions.Event;
+import sample.actions.Update;
+import sample.organizations.FireDepartment;
+import sample.organizations.MADA;
+import sample.organizations.Police;
+import sample.users.BasicUser;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +34,12 @@ public class CreateEvent {
     public TextField description;
     public TextField personOnDuty;
     public Label unCorrect;
+
+    public CheckBox crobbery;
+    public CheckBox cmurder;
+    public CheckBox cfire;
+    public CheckBox ccaraccident;
+    public CheckBox cterror;
 
     public CheckBox c11;
     public CheckBox c21;
@@ -40,6 +53,11 @@ public class CreateEvent {
         this.name = new TextField();
         this.description = new TextField();
         this.personOnDuty = new TextField();
+        this.crobbery = new CheckBox();
+        this.cmurder = new CheckBox();
+        this.cfire = new CheckBox();
+        this.ccaraccident = new CheckBox();
+        this.cterror = new CheckBox();
         this.c11 = new CheckBox();
         this.c21 = new CheckBox();
         this.c31 = new CheckBox();
@@ -55,22 +73,46 @@ public class CreateEvent {
 
     public void save(ActionEvent actionEvent) {
         unCorrect.setVisible(false);
-        unCorrect.setText("Error: please input 'MADA','police' or 'fire department'");
-        String dutyInput = personOnDuty.getText();
-        boolean valid_duty = (dutyInput.equals("MADA") ||
-                              dutyInput.equals("police") ||
-                              dutyInput.equals("fire department"));
-        if(valid_duty){
+        unCorrect.setText("Error: The person of duty doesn't exist.");
+        BasicUser person = Controller.getInstance().login(personOnDuty.getText());
+        if(person != null){
             categories = new ArrayList<>();
-            if(c11.isSelected())
-                categories.add("MADA");
-            if(c11.isSelected())
-                categories.add("police");
-            if(c11.isSelected())
-                categories.add("fire department");
+            if(crobbery.isSelected())
+                categories.add("Robbery");
+            if(cmurder.isSelected())
+                categories.add("Murder");
+            if(cfire.isSelected())
+                categories.add("Fire");
+            if(ccaraccident.isSelected())
+                categories.add("CarAccident");
+            if(cterror.isSelected())
+                categories.add("Terror");
+            if(categories.size() == 0){
+                unCorrect.setText("Error: must select at least 1 category.");
+            }
+            else{
+                boolean valid_duty = (person.getOrg() instanceof MADA && c11.isSelected())
+                        || (person.getOrg() instanceof Police && c21.isSelected())
+                        || (person.getOrg() instanceof FireDepartment && c31.isSelected());
 
-            Controller.getInstance().saveEvent(name.getText(),description.getText(),categories,personOnDuty.getText());
-            unCorrect.setText("successfully registered event!");
+                if(!valid_duty){
+                    unCorrect.setText("Error: person on duty's organization must be checked.");
+                }
+                else{
+                    //prepare input for controller
+                    String nameInput = name.getText();
+                    ArrayList<BasicUser> dutyInput = new ArrayList<>();
+                    dutyInput.add(person);
+                    Update start = new Update();
+                    start.setDate(LocalDateTime.now());
+                    start.setCurrentDescription(description.getText());
+                    start.setOriginalDescription(description.getText());
+                    Event event = new Event(nameInput,dutyInput,start,categories);
+                    start.setEvent(event);
+                    Controller.getInstance().saveEvent(event);
+                    unCorrect.setText("successfully registered event!");
+                }
+            }
         }
         unCorrect.setVisible(true);
     }

@@ -34,23 +34,27 @@ public class Controller {
         this.currentUser = user;
     }
 
-    public void saveEvent(String name,
-                          String description,
-                          ArrayList<String> categories,
-                          String personOnDuty) {
-        //public Event(String title, List<BasicUser> security,
-        // Update update, List<String> cats, String status) {
+//    public void saveEvent(String name,
+//                          String description,
+//                          ArrayList<String> categories,
+//                          String personOnDuty) {
+//        //public Event(String title, List<BasicUser> security,
+//        // Update update, List<String> cats, String status) {
+//
+//        SecurityUser manager= new SecurityUser();
+//        manager.setUsername(personOnDuty);
+//        manager.setOrg(personOnDuty);
+//        ArrayList<BasicUser> security =new ArrayList<>();
+//        security.add(manager);
+//        Update start = new Update();
+//        start.setDate(LocalDateTime.now());
+//        Event e = new Event(name,security,start,categories);
+//        start.setEvent(e);
+//        DBHandler.addEvent(e);
+//    }
 
-        SecurityUser manager= new SecurityUser();
-        manager.setUsername(personOnDuty);
-        manager.setOrg(personOnDuty);
-        ArrayList<BasicUser> security =new ArrayList<>();
-        security.add(manager);
-        Update start = new Update();
-        start.setDate(LocalDateTime.now());
-        Event e = new Event(name,security,start,categories);
-        start.setEvent(e);
-        DBHandler.addEvent(e);
+    public void saveEvent(Event event){
+        DBHandler.addEvent(event);
     }
 
     public void saveComplaint(Complaint complaint) {

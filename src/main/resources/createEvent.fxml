@@ -19,16 +19,16 @@
       <TextArea fx:id="Description" layoutX="268.0" layoutY="94.0" prefHeight="207.0" prefWidth="304.0" promptText="Description" />
       <Button fx:id="save" layoutX="469.0" layoutY="350.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="99.0" text="save" onAction="#save"/>
       <Button fx:id="back" layoutX="503.0" layoutY="24.0" mnemonicParsing="false" onAction="#goBack" prefHeight="31.0" prefWidth="65.0" text="back" />
-      <CheckBox fx:id="c1" layoutX="22.0" layoutY="168.0" mnemonicParsing="false" text="robbery" />
-      <CheckBox fx:id="c2" layoutX="24.0" layoutY="192.0" mnemonicParsing="false" text="murder" />
-      <CheckBox fx:id="c4" layoutX="23.0" layoutY="243.0" mnemonicParsing="false" text="fire" />
-      <CheckBox fx:id="c3" layoutX="23.0" layoutY="219.0" mnemonicParsing="false" text="car accident" />
+      <CheckBox fx:id="crobbery" layoutX="22.0" layoutY="168.0" mnemonicParsing="false" text="robbery" />
+      <CheckBox fx:id="cmurder" layoutX="24.0" layoutY="192.0" mnemonicParsing="false" text="murder" />
+      <CheckBox fx:id="cfire" layoutX="23.0" layoutY="243.0" mnemonicParsing="false" text="fire" />
+      <CheckBox fx:id="ccaraccident" layoutX="23.0" layoutY="219.0" mnemonicParsing="false" text="car accident" />
       <Label layoutX="22.0" layoutY="129.0" prefHeight="26.0" prefWidth="65.0" text="category" textAlignment="CENTER">
          <font>
             <Font name="System Bold Italic" size="14.0" />
          </font>
       </Label>
-      <CheckBox fx:id="c41" layoutX="23.0" layoutY="272.0" mnemonicParsing="false" text="terror" />
+      <CheckBox fx:id="cterror" layoutX="23.0" layoutY="272.0" mnemonicParsing="false" text="terror" />
       <CheckBox fx:id="c11" layoutX="126.0" layoutY="177.0" mnemonicParsing="false" text="MADA" />
       <CheckBox fx:id="c21" layoutX="125.0" layoutY="201.0" mnemonicParsing="false" text="police" />
       <CheckBox fx:id="c31" layoutX="126.0" layoutY="228.0" mnemonicParsing="false" text="fire department" />
